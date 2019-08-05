@@ -1,0 +1,45 @@
+[reframe]
+name = "Mainframe"
+author = "r@nosql.asia"
+min_version = "0.1.8"
+
+[project]
+name = "Mainframe"
+version = "0.1.0"
+ignore_dirs = [
+  "target",
+  "build",
+  ".gradle"
+]
+ignore_files = [
+  ".flutter-plugins",
+  ".packages",
+  "*.iml"
+]
+finish_text = """Usage:
+
+    $ cd $name_kebab_case$
+
+To test:
+
+    $ make test
+
+To run:
+
+    $ cargo run
+
+"""
+
+[[param]]
+desc = { ask = "Description ?", default="My Mainframe project" }
+
+[[param]]
+author_name = { ask = "Author name?", default="Robin" }
+
+[[param]]
+author_email = { ask = "Author email?", default="robin@mail.com" }
+
+[[param]]
+company_name = { ask = "Company name?", default="Ansvia" }
+
+
