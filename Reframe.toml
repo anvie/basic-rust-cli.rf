@@ -31,7 +31,7 @@ To run:
 """
 
 [[param]]
-desc = { ask = "Description ?", default="My Mainframe project" }
+desc = { ask = "Description ?", default="My Simple CLI project" }
 
 [[param]]
 author_name = { ask = "Author name?", default="Robin" }
