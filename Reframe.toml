@@ -1,10 +1,10 @@
 [reframe]
-name = "Mainframe"
+name = "Basic CLI"
 author = "r@nosql.asia"
 min_version = "0.1.8"
 
 [project]
-name = "Mainframe"
+name = "MyCoolCliApp"
 version = "0.1.0"
 ignore_dirs = [
   "target",
