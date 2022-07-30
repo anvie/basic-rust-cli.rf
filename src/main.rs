@@ -22,7 +22,7 @@ fn main() {
         .about("$param.desc$")
         .arg(
             Arg::with_name("config")
-                .short("c")
+                .short('c')
                 .long("config")
                 .value_name("FILE")
                 .help("Set config file")
