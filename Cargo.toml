@@ -5,4 +5,5 @@ authors = ["$param.author_name$ <$param.author_email_lowercase$>"]
 edition = "2018"
 
 [dependencies]
-clap = "2.33"
+clap = "3.2"
+
