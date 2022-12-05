@@ -18,7 +18,9 @@ use std::{fs, io::ErrorKind, process::exit};
 {{/if}}
 
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about=None)]
+#[command(name="$name_kebab_case$")]
+#[command(about="$param.desc$")]
+#[command(author, version, long_about=None)]
 struct Args {
     #[arg(short, long, default_value = "default.conf")]
     config: String,
