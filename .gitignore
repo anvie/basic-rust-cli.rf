@@ -1,2 +1,6 @@
 /target
 **/*.rs.bk
+.env
+.env-production
+.env-prod
+.env-stage
