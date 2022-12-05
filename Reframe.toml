@@ -43,7 +43,7 @@ author_email = { ask = "Author email?", default="robin@mail.com" }
 company_name = { ask = "Company name?", default="Ansvia" }
 
 [[param]]
-with_toml = { ask = "Use toml for config support?", default="true" }
+with_toml = { ask = "Use toml for config support?", default="false" }
 
 
 [[present]]
