@@ -11,25 +11,42 @@
 // from $param.company_name$.
 
 
-extern crate clap;
+use clap::Parser;
+{{#if with_toml}}
+use serde::Deserialize;
+use std::{fs, io::ErrorKind, process::exit};
+{{/if}}
 
-use clap::{App, Arg};
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about=None)]
+struct Args {
+    #[arg(short, long, default_value = "default.conf")]
+    config: String,
+}
+{{#if with_toml}}
+#[derive(Deserialize, Debug)]
+struct Config {
+    param: u32,
+}
+{{/if}}
 
 fn main() {
-    let mc = App::new("$name_camel_case$")
-        .version("$version$")
-        .author("$param.author_name$ <$param.author_email_lower_case$>")
-        .about("$param.desc$")
-        .arg(
-            Arg::with_name("config")
-                .short('c')
-                .long("config")
-                .value_name("FILE")
-                .help("Set config file")
-                .takes_value(true),
-        )
-        .get_matches();
+    let args = Args::parse();
+    println!("Value for config: {}", args.config);
 
-    let config = mc.value_of("config").unwrap_or("default.conf");
-    println!("Value for config: {}", config);
+    {{#if with_toml}}
+    let config: Config = match fs::read_to_string(&args.config) {
+        Ok(config) => toml::from_str(&config).unwrap(),
+        Err(e) => {
+            if e.kind() == ErrorKind::NotFound {
+                println!("`{}` not exists.", args.config);
+                exit(2);
+            } else {
+                panic!("Error: {}", e);
+            }
+        },
+    };
+    println!("Value for param: {}", config.param);
+    println!("Config: {:#?}", config);
+    {{/if}}
 }

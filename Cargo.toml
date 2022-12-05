@@ -1,9 +1,12 @@
 [package]
-name = "$name_snake_case$"
-version = "$version$"
 authors = ["$param.author_name$ <$param.author_email_lower_case$>"]
 edition = "2018"
+name = "$name_snake_case$"
+version = "$version$"
 
 [dependencies]
-clap = "3.2"
-
+clap = {version = "4.0.13", features = ["derive"]}
+{{#if with_toml}}
+toml = "0.5"
+serde = {version = "1.0", features = ["derive"]}
+{{/if}}

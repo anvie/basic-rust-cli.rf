@@ -42,4 +42,10 @@ author_email = { ask = "Author email?", default="robin@mail.com" }
 [[param]]
 company_name = { ask = "Company name?", default="Ansvia" }
 
+[[param]]
+with_toml = { ask = "Use toml for config support?", default="true" }
 
+
+[[present]]
+path = "default.conf"
+if = "with_toml"
