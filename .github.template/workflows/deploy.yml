@@ -1,0 +1,86 @@
+# This file is a YAML-formatted configuration file for GitHub Actions
+# For more information about how to create and use GitHub Actions, see
+# https://help.github.com/en/articles/about-github-actions
+
+name: Build $name$ and deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set env
+      run: |
+        chmod +x ./.github/setenv.sh
+        ./.github/setenv.sh >> $GITHUB_ENV
+
+    - uses: actions-rs/toolchain@v1
+      with:
+        toolchain: nightly
+
+    # - uses: actions-rs/cargo@v1
+    #   with:
+    #     command: build
+    #     args: --release
+
+    # - name: Build-musl Linux x86
+    #   uses: shogan/rust-musl-action@master
+    #   with:
+    #     args: cargo build --target x86_64-unknown-linux-musl --release
+
+    - uses: actions/checkout@v2
+    - name: Build-musl
+      uses: gmiam/rust-musl-action@master
+      with:
+        args: cargo build --target x86_64-unknown-linux-musl --release
+
+    # # touch file for testing purposes
+    # - name: touch file
+    #   run: |
+    #     mkdir -p target/release
+    #     touch target/release/$name_snake_case$
+
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        known_hosts: unnecessary
+
+    - name: Adding Known Hosts
+      run: ssh-keyscan -p ${{ secrets.SSH_PORT}} -H ${{ secrets.SSH_HOST }}  >> ~/.ssh/known_hosts
+
+    - name: Deploy with rsync
+      # run: rsync -avzrhcP --chown www:www -e "ssh -p ${{ secrets.SSH_PORT }}" ./target/release/$name_snake_case$ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ env.BIN_OUTPUT }}
+      # for musl
+      run: rsync -avzrhcP --chown www:www -e "ssh -p ${{ secrets.SSH_PORT }}" ./target/x86_64-unknown-linux-musl/release/$name_snake_case$ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ env.BIN_OUTPUT }}
+    
+    - name: Chown to user www group www
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          sudo chown www:www ${{ env.BIN_OUTPUT }}
+          sudo chmod +x ${{ env.BIN_OUTPUT }}
+          sudo rm /usr/local/bin/$name_snake_case$
+          sudo ln -s ${{ env.BIN_OUTPUT }} /usr/local/bin/$name_snake_case$
+  
+    - name: Restart $name$ service
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT }}
+        script: |
+          systemctl restart $name_snake_case$
+    
