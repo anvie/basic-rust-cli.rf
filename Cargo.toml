@@ -6,6 +6,7 @@ version = "$version$"
 
 [dependencies]
 clap = {version = "4.0.13", features = ["derive"]}
+dotenv = "0.15.0"
 {{#if with_toml}}
 toml = "0.5"
 serde = {version = "1.0", features = ["derive"]}

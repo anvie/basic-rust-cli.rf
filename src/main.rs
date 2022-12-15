@@ -33,6 +33,8 @@ struct Config {
 {{/if}}
 
 fn main() {
+    dotenv::dotenv().ok();
+
     let args = Args::parse();
     println!("Value for config: {}", args.config);
 
