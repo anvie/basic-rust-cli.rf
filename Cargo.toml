@@ -8,6 +8,6 @@ version = "$version$"
 clap = {version = "4.0.13", features = ["derive"]}
 dotenv = "0.15.0"
 {{#if with_toml}}
-toml = "0.5"
+toml = "0.7"
 serde = {version = "1.0", features = ["derive"]}
 {{/if}}
