@@ -11,7 +11,8 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    #runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v2
@@ -23,7 +24,7 @@ jobs:
 
     - uses: actions-rs/toolchain@v1
       with:
-        toolchain: nightly
+        toolchain: stable
 
     # - uses: actions-rs/cargo@v1
     #   with:
@@ -35,17 +36,32 @@ jobs:
     #   with:
     #     args: cargo build --target x86_64-unknown-linux-musl --release
 
-    - uses: actions/checkout@v2
-    - name: Build-musl
-      uses: gmiam/rust-musl-action@master
-      with:
-        args: cargo build --target x86_64-unknown-linux-musl --release
+    # - uses: actions/checkout@v2
+    # - name: Build-musl
+    #   uses: gmiam/rust-musl-action@master
+    #   with:
+    #     args: cargo build --target x86_64-unknown-linux-musl --release
 
     # # touch file for testing purposes
     # - name: touch file
     #   run: |
     #     mkdir -p target/release
     #     touch target/release/$name_snake_case$
+
+    - name: Install rust toolchain
+      uses: dtolnay/rust-toolchain@master
+      with:
+        toolchain: stable
+
+    - name: Rust version check
+      shell: bash
+      run: |
+        cargo +stable --version
+        rustc +stable --version
+
+    - name: Build
+      shell: bash
+      run: cargo build --release
 
     - name: Install SSH Key
       uses: shimataro/ssh-key-action@v2
@@ -57,9 +73,9 @@ jobs:
       run: ssh-keyscan -p $\{{ secrets.SSH_PORT}} -H $\{{ secrets.SSH_HOST }}  >> ~/.ssh/known_hosts
 
     - name: Deploy with rsync
-      # run: rsync -avzrhcP --chown www:www -e "ssh -p $\{{ secrets.SSH_PORT }}" ./target/release/$name_snake_case$ $\{{ secrets.SSH_USERNAME }}@$\{{ secrets.SSH_HOST }}:$\{{ env.BIN_OUTPUT }}
+      run: rsync -avzrhcP --chown www:www -e "ssh -p $\{{ secrets.SSH_PORT }}" ./target/release/$name_snake_case$ $\{{ secrets.SSH_USERNAME }}@$\{{ secrets.SSH_HOST }}:$\{{ env.BIN_OUTPUT }}
       # for musl
-      run: rsync -avzrhcP --chown www:www -e "ssh -p $\{{ secrets.SSH_PORT }}" ./target/x86_64-unknown-linux-musl/release/$name_snake_case$ $\{{ secrets.SSH_USERNAME }}@$\{{ secrets.SSH_HOST }}:$\{{ env.BIN_OUTPUT }}
+      #run: rsync -avzrhcP --chown www:www -e "ssh -p $\{{ secrets.SSH_PORT }}" ./target/x86_64-unknown-linux-musl/release/$name_snake_case$ $\{{ secrets.SSH_USERNAME }}@$\{{ secrets.SSH_HOST }}:$\{{ env.BIN_OUTPUT }}
     
     - name: Chown to user www group www
       uses: appleboy/ssh-action@master
