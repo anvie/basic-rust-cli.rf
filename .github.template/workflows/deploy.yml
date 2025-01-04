@@ -99,4 +99,17 @@ jobs:
         port: $\{{ secrets.SSH_PORT }}
         script: |
           systemctl restart $name_snake_case$
-    
+
+      ### For webhook style deployment:
+      # - name: Invoke deployment hook
+      #   uses: distributhor/workflow-webhook@v3
+      #   with:
+      #     webhook_url: ${{ secrets.WEBHOOK_URL }}
+      #     webhook_type: json
+      #     webhook_auth_type: header
+      #     webhook_auth: "X-SECRET-KEY:${{ secrets.SECRET_KEY }}"
+      #     data: '{ "version": "1.0", "commit_hash": "abc856def", "source_dir": "${{ secrets.SOURCE_DIR }}", "git_branch": "main", "post_update_params": [] }'
+      #     verbose: true
+
+
+
